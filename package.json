@@ -1,0 +1,25 @@
+{
+  "name": "ecommerce-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@9.6.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "concurrently -n api,web -c blue,green \"pnpm --filter @acme/api dev\" \"pnpm --filter @acme/web dev\"",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "format": "pnpm -r format",
+    "seed": "ts-node scripts/seed.ts"
+  },
+  "devDependencies": {
+    "@types/pdfkit": "^0.17.2",
+    "@types/uuid": "^10.0.0",
+    "concurrently": "^9.0.1",
+    "ts-node": "^10.9.2"
+  }
+}

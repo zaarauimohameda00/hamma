@@ -8,17 +8,19 @@ function getClient() {
   return createClient(url, anon, { auth: { persistSession: false } });
 }
 
-export default async function CategoryPage({ params, searchParams }: { params: { slug: string }; searchParams: Record<string, string | string[] | undefined> }) {
+export default async function CategoryPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const supabase = getClient();
-  const { data: category } = await supabase.from('categories').select('*').eq('slug', params.slug).single();
+  const { slug } = await params;
+  const sp = await searchParams;
+  const { data: category } = await supabase.from('categories').select('*').eq('slug', slug).single();
   if (!category) return null;
 
-  const page = Number(searchParams.page ?? 1);
+  const page = Number(sp.page ?? 1);
   const pageSize = 24;
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
-  const sort = String(searchParams.sort ?? 'created_at:desc');
+  const sort = String(sp.sort ?? 'created_at:desc');
   const [column, dir] = sort.split(':');
   const ascending = dir !== 'desc';
 

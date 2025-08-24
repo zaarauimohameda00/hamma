@@ -8,18 +8,19 @@ function getClient() {
   return createClient(url, anon, { auth: { persistSession: false } });
 }
 
-export default async function SearchPage({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
+export default async function SearchPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const supabase = getClient();
-  const q = String(searchParams.q ?? '').trim();
-  const category = String(searchParams.category ?? '') || undefined;
-  const min = searchParams.min ? Number(searchParams.min) : undefined;
-  const max = searchParams.max ? Number(searchParams.max) : undefined;
-  const availability = String(searchParams.availability ?? '') || undefined; // 'in-stock'
-  const sort = String(searchParams.sort ?? 'created_at:desc');
+  const sp = await searchParams;
+  const q = String(sp.q ?? '').trim();
+  const category = String(sp.category ?? '') || undefined;
+  const min = sp.min ? Number(sp.min) : undefined;
+  const max = sp.max ? Number(sp.max) : undefined;
+  const availability = String(sp.availability ?? '') || undefined; // 'in-stock'
+  const sort = String(sp.sort ?? 'created_at:desc');
   const [column, dir] = sort.split(':');
   const ascending = dir !== 'desc';
 
-  const page = Number(searchParams.page ?? 1);
+  const page = Number(sp.page ?? 1);
   const pageSize = 24;
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;

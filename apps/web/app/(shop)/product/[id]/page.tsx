@@ -9,12 +9,13 @@ function getClient() {
   return createClient(url, anon, { auth: { persistSession: false } });
 }
 
-export default async function ProductDetailPage({ params }: { params: { id: string } }) {
+export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const supabase = getClient();
   const { data: product } = await supabase
     .from('products')
     .select('*, product_variants(*), categories(name, slug)')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (!product) return null;

@@ -12,10 +12,11 @@ export function parseSort(
   defaultSort: string
 ): { column: string; ascending: boolean } {
   const sort = String(query.sort ?? defaultSort);
-  const [rawColumn, rawDir] = sort.split(':');
-  const fallbackParts = defaultSort.split(':');
-  const column = allowed.includes(rawColumn) ? rawColumn : fallbackParts[0] ?? allowed[0] ?? 'created_at';
-  const dir = (rawDir ?? fallbackParts[1] ?? 'desc').toLowerCase();
-  const ascending = dir !== 'desc';
+  const parts = sort.split(':');
+  const defaultParts = defaultSort.split(':');
+  const rawColumn = parts[0] || defaultParts[0] || allowed[0] || 'created_at';
+  const rawDir = (parts[1] || defaultParts[1] || 'desc').toLowerCase();
+  const column = allowed.includes(rawColumn) ? rawColumn : (allowed[0] || 'created_at');
+  const ascending = rawDir !== 'desc';
   return { column, ascending };
 }
